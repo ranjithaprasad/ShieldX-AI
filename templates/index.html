@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShieldX AI - Cybersecurity Assistant</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080e1c;color:#eaf2ff;
+ font-family:Arial,sans-serif;min-height:100vh;
+ display:flex;flex-direction:column;
+}
+header{
+ padding:18px 22px;background:#101b30;
+ border-bottom:1px solid #263b5c;
+ display:flex;align-items:center;gap:12px;
+}
+.logo{
+ width:42px;height:42px;border-radius:12px;
+ background:#0878e8;display:grid;place-items:center;
+ font-size:23px;font-weight:bold;
+}
+h2{margin:0;font-size:20px}
+header p{margin:4px 0 0;color:#8ca8ca;font-size:12px}
+main{
+ width:100%;max-width:850px;margin:auto;
+ padding:24px;flex:1;display:flex;flex-direction:column;
+}
+.welcome{text-align:center;margin:35px 0}
+.welcome h1{font-size:30px}
+.welcome p{color:#9bb1cf}
+.chat{
+ flex:1;display:flex;flex-direction:column;gap:15px;
+}
+.message{
+ padding:14px 16px;border-radius:14px;
+ max-width:85%;line-height:1.6;white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}
+.bot{background:#14243d;align-self:flex-start}
+.user{background:#075dbb;align-self:flex-end}
+form{
+ display:flex;gap:10px;margin-top:20px;
+}
+input{
+ flex:1;min-width:0;padding:16px;
+ border:1px solid #304768;border-radius:12px;
+ background:#111d31;color:white;font-size:15px;
+}
+button{
+ padding:0 22px;border:0;border-radius:12px;
+ background:#0878e8;color:white;font-weight:bold;
+ cursor:pointer;
+}
+button:disabled{opacity:.5}
+footer{text-align:center;color:#7389a8;padding:15px;font-size:12px}
+@media(max-width:500px){
+ main{padding:15px}
+ .welcome h1{font-size:25px}
+ .message{max-width:95%}
+ form{gap:7px}
+ button{padding:0 14px}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">X</div>
+ <div>
+  <h2>ShieldX AI</h2>
+  <p>AI Cybersecurity Assistant</p>
+ </div>
+</header>
+
+<main>
+ <section class="welcome">
+  <h1>Welcome to ShieldX AI</h1>
+  <p>Your intelligent cybersecurity learning assistant.</p>
+ </section>
+
+ <section class="chat" id="chat">
+  <div class="message bot">
+   Hello! I'm ShieldX AI. Ask me anything about cybersecurity, networking, Linux or ethical hacking.
+  </div>
+ </section>
+
+ <form id="chatForm">
+  <input id="message" placeholder="Ask your cybersecurity question..." autocomplete="off" required>
+  <button id="sendBtn" type="submit">Send</button>
+ </form>
+</main>
+
+<footer>ShieldX AI · Learn. Secure. Protect.</footer>
+
+<script>
+const form=document.getElementById("chatForm");
+const input=document.getElementById("message");
+const chat=document.getElementById("chat");
+const button=document.getElementById("sendBtn");
+
+function addMessage(text,type){
+ const div=document.createElement("div");
+ div.className="message "+type;
+ div.textContent=text;
+ chat.appendChild(div);
+ chat.scrollTop=chat.scrollHeight;
+}
+
+form.addEventListener("submit",async(e)=>{
+ e.preventDefault();
+ const message=input.value.trim();
+ if(!message)return;
+
+ addMessage(message,"user");
+ input.value="";
+ button.disabled=true;
+ button.textContent="...";
+
+ const loading=document.createElement("div");
+ loading.className="message bot";
+ loading.textContent="ShieldX AI is thinking...";
+ chat.appendChild(loading);
+
+ try{
+  const response=await fetch("/chat",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({message})
+  });
+  const data=await response.json();
+  loading.textContent=data.reply||data.error||"Something went wrong.";
+ }catch(error){
+  loading.textContent="Unable to connect. Please try again.";
+ }
+ button.disabled=false;
+ button.textContent="Send";
+});
+</script>
+</body>
+</html>
