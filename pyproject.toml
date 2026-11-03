@@ -1,9 +1,13 @@
+[project]
 name = "shieldx-ai"
 version = "1.0.0"
 requires-python = ">=3.12"
-
-[project]
 dependencies = [
-    "flask",
-    "requests",
-    "workers"
+    "flask"
+]
+
+[dependency-groups]
+dev = [
+    "workers-py",
+    "workers-runtime-sdk"
+]
