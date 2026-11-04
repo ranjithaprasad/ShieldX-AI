@@ -3,332 +3,210 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>ShieldX AI — Cybersecurity Assistant</title>
-
+  <meta name="theme-color" content="#212121">
+  <title>ShieldX AI</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #0b1220;
-      --panel: #121d2e;
-      --panel2: #18263a;
-      --line: #2b3b52;
-      --text: #edf4ff;
-      --muted: #a7b6ca;
-      --accent: #42d3b5;
-      --user: #174b57;
-    }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, Arial, sans-serif;
+      font-family: Arial, sans-serif;
+      background: #212121;
+      color: #ececec;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-
-    .wrap {
-      max-width: 920px;
-      margin: auto;
-      padding: 22px 16px 28px;
-    }
-
     header {
+      height: 64px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid #383838;
+      font-size: 19px;
+      font-weight: bold;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
     .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
+      background: #16a085;
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
-      background: var(--accent);
-      color: #06211e;
-      font-weight: 900;
-      font-size: 20px;
+      margin-right: 11px;
     }
-
-    h1 { margin: 0; font-size: 20px; }
-
-    .tag {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
+    main {
+      flex: 1;
+      overflow-y: auto;
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+      padding: 30px 20px 150px;
     }
-
-    button, textarea { font: inherit; }
-
-    .intro {
-      margin: 24px 0 14px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: linear-gradient(135deg,#14253a,#102c32);
+    .welcome {
+      text-align: center;
+      margin: 15vh auto 30px;
     }
-
-    .intro h2 { margin: 0 0 7px; font-size: 18px; }
-
-    .intro p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 14px;
+    .welcome h1 {
+      font-size: clamp(27px, 5vw, 36px);
+      margin-bottom: 12px;
     }
-
-    .chips {
+    .welcome p { color: #aaa; font-size: 15px; }
+    #messages {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 14px 0;
+      flex-direction: column;
+      gap: 24px;
     }
-
-    .chip {
-      background: var(--panel2);
-      border: 1px solid var(--line);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 8px 11px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .chip:hover { border-color: var(--accent); }
-
-    .chat {
-      min-height: 340px;
-      max-height: 55vh;
-      overflow: auto;
-      padding: 14px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-    }
-
-    .msg {
-      max-width: 88%;
-      margin: 0 0 12px;
-      padding: 11px 13px;
-      border-radius: 14px;
-      line-height: 1.5;
+    .message {
+      padding: 15px 19px;
+      border-radius: 18px;
+      line-height: 1.65;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
-      font-size: 14px;
+      max-width: 90%;
     }
-
-    .bot {
-      background: var(--panel2);
-      border: 1px solid var(--line);
-    }
-
     .user {
-      background: var(--user);
-      margin-left: auto;
+      align-self: flex-end;
+      background: #303030;
     }
-
-    .who {
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .assistant {
+      align-self: flex-start;
+      background: transparent;
+      max-width: 100%;
     }
-
     .composer {
-      display: flex;
-      gap: 9px;
-      margin-top: 12px;
-      padding: 10px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 15px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 18px 16px 22px;
+      background: linear-gradient(transparent, #212121 18%);
     }
-
+    .input-wrap {
+      max-width: 800px;
+      margin: auto;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #555;
+      border-radius: 25px;
+      background: #303030;
+    }
     textarea {
       flex: 1;
-      resize: vertical;
-      min-height: 48px;
-      max-height: 150px;
+      resize: none;
       border: 0;
-      outline: 0;
+      outline: none;
       background: transparent;
-      color: var(--text);
-      padding: 10px;
-      font-size: 14px;
+      color: white;
+      font: inherit;
+      padding: 8px;
+      max-height: 150px;
+      min-height: 28px;
     }
-
-    #send {
-      align-self: flex-end;
+    button {
+      width: 40px;
+      height: 40px;
       border: 0;
-      border-radius: 11px;
-      padding: 12px 17px;
-      background: var(--accent);
-      color: #06211e;
-      font-weight: 800;
+      border-radius: 50%;
+      background: #16a085;
+      color: white;
+      font-size: 21px;
       cursor: pointer;
     }
-
-    #send:disabled { opacity: .55; cursor: wait; }
-
+    button:disabled { opacity: .5; }
     .note {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-      margin: 10px 3px;
-    }
-
-    footer {
-      color: var(--muted);
-      font-size: 11px;
       text-align: center;
-      margin-top: 20px;
+      color: #888;
+      font-size: 11px;
+      margin-top: 9px;
     }
-
-    @media(max-width:560px) {
-      .wrap { padding: 15px 11px 22px; }
-      h1 { font-size: 17px; }
-      .msg { max-width: 96%; }
-      #send { padding: 11px 13px; }
+    @media(max-width: 600px) {
+      header { padding: 0 15px; }
+      main { padding: 20px 14px 140px; }
+      .message { max-width: 95%; }
+      .composer { padding: 12px 10px 18px; }
     }
   </style>
 </head>
-
 <body>
-  <main class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">S</div>
-        <div>
-          <h1 id="brandName">ShieldX AI</h1>
-          <p class="tag">Intelligence. Security. Protection.</p>
-        </div>
-      </div>
-    </header>
+  <header>
+    <div class="logo">S</div>
+    ShieldX AI
+  </header>
 
-    <section class="intro">
-      <h2>Ask your cybersecurity question</h2>
-      <p>
-        Learn cybersecurity step by step: Linux, Kali, Nmap,
-        Burp Suite, networking, VAPT, web security and safe lab practice.
-      </p>
+  <main id="chat">
+    <section class="welcome" id="welcome">
+      <h1>What can I help you with?</h1>
+      <p>Your AI assistant for learning and exploring cybersecurity.</p>
     </section>
-
-    <div class="chips" aria-label="Suggested questions">
-      <button class="chip" data-q="Explain Nmap -sS and -sT with safe lab examples.">Nmap scans</button>
-      <button class="chip" data-q="What is Burp Suite Repeater and how do I use it in DVWA?">Burp Suite</button>
-      <button class="chip" data-q="Explain SQL injection and how to prevent it.">SQL injection</button>
-      <button class="chip" data-q="Explain reflected and stored XSS with safe examples.">XSS</button>
-      <button class="chip" data-q="Give me a beginner VAPT workflow for my own lab.">VAPT workflow</button>
-    </div>
-
-    <section class="chat" id="chat" aria-live="polite">
-      <div class="msg bot">
-        <div class="who">ASSISTANT</div>
-        Hello! Welcome to ShieldX AI. I can help you learn
-        cybersecurity in English. Ask me anything!
-        Practice only on your own systems or authorized labs.
-      </div>
-    </section>
-
-    <form class="composer" id="form">
-      <textarea
-        id="question"
-        maxlength="4000"
-        placeholder="Type your cybersecurity question..."
-        required
-      ></textarea>
-      <button id="send" type="submit">Send</button>
-    </form>
-
-    <p class="note">
-      Educational assistant only. Test systems only when you own them
-      or have explicit permission. AI answers can be inaccurate;
-      verify commands before using them.
-    </p>
-
-    <footer>Built with Cloudflare Workers + Workers AI</footer>
+    <div id="messages"></div>
   </main>
 
+  <div class="composer">
+    <form class="input-wrap" id="chatForm">
+      <textarea id="messageInput" rows="1"
+        placeholder="Message ShieldX AI..." required></textarea>
+      <button id="sendBtn" type="submit" aria-label="Send">↑</button>
+    </form>
+    <div class="note">ShieldX AI can make mistakes. Verify important information.</div>
+  </div>
+
   <script>
-    const form = document.getElementById("form");
-    const input = document.getElementById("question");
-    const chat = document.getElementById("chat");
-    const send = document.getElementById("send");
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("messageInput");
+    const messages = document.getElementById("messages");
+    const welcome = document.getElementById("welcome");
+    const sendBtn = document.getElementById("sendBtn");
 
-    function addMessage(text, role) {
-      const box = document.createElement("div");
-      box.className = "msg " + (role === "user" ? "user" : "bot");
-
-      const who = document.createElement("div");
-      who.className = "who";
-      who.textContent = role === "user" ? "YOU" : "ASSISTANT";
-
-      const content = document.createElement("div");
-      content.textContent = text;
-
-      box.append(who, content);
-      chat.appendChild(box);
-      chat.scrollTop = chat.scrollHeight;
-
-      return box;
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = "message " + type;
+      div.textContent = text;
+      messages.appendChild(div);
+      document.getElementById("chat").scrollTop =
+        document.getElementById("chat").scrollHeight;
+      return div;
     }
 
-    async function ask(question) {
-      const clean = question.trim();
-      if (!clean || send.disabled) return;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = input.value.trim();
+      if (!message || sendBtn.disabled) return;
 
-      addMessage(clean, "user");
+      welcome.style.display = "none";
+      addMessage(message, "user");
       input.value = "";
-      send.disabled = true;
-      send.textContent = "...";
+      sendBtn.disabled = true;
 
-      const waiting = addMessage("Thinking...", "bot");
+      const reply = addMessage("Thinking...", "assistant");
 
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: clean })
+          body: JSON.stringify({ message })
         });
 
         const data = await response.json();
-        waiting.remove();
-
         if (!response.ok) {
-          addMessage(data.error || "Request failed. Please try again.", "bot");
-        } else {
-          addMessage(data.answer, "bot");
+          throw new Error(data.error || "Something went wrong.");
         }
+        reply.textContent = data.answer || "No response received.";
       } catch (error) {
-        waiting.remove();
-        addMessage(
-          "Could not connect to the server. Check your internet and deployment.",
-          "bot"
-        );
+        reply.textContent = "Sorry, I couldn't connect. " + error.message;
       } finally {
-        send.disabled = false;
-        send.textContent = "Send";
+        sendBtn.disabled = false;
         input.focus();
       }
-    }
-
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      ask(input.value);
     });
 
-    document.querySelectorAll("[data-q]").forEach(button => {
-      button.addEventListener("click", () => ask(button.dataset.q));
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
     });
   </script>
 </body>
