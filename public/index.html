@@ -1,213 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#212121">
-  <title>ShieldX AI</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #212121;
-      color: #ececec;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      height: 64px;
-      display: flex;
-      align-items: center;
-      padding: 0 22px;
-      border-bottom: 1px solid #383838;
-      font-size: 19px;
-      font-weight: bold;
-    }
-    .logo {
-      background: #16a085;
-      color: #fff;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      margin-right: 11px;
-    }
-    main {
-      flex: 1;
-      overflow-y: auto;
-      width: 100%;
-      max-width: 850px;
-      margin: auto;
-      padding: 30px 20px 150px;
-    }
-    .welcome {
-      text-align: center;
-      margin: 15vh auto 30px;
-    }
-    .welcome h1 {
-      font-size: clamp(27px, 5vw, 36px);
-      margin-bottom: 12px;
-    }
-    .welcome p { color: #aaa; font-size: 15px; }
-    #messages {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    .message {
-      padding: 15px 19px;
-      border-radius: 18px;
-      line-height: 1.65;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      max-width: 90%;
-    }
-    .user {
-      align-self: flex-end;
-      background: #303030;
-    }
-    .assistant {
-      align-self: flex-start;
-      background: transparent;
-      max-width: 100%;
-    }
-    .composer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 18px 16px 22px;
-      background: linear-gradient(transparent, #212121 18%);
-    }
-    .input-wrap {
-      max-width: 800px;
-      margin: auto;
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      padding: 12px;
-      border: 1px solid #555;
-      border-radius: 25px;
-      background: #303030;
-    }
-    textarea {
-      flex: 1;
-      resize: none;
-      border: 0;
-      outline: none;
-      background: transparent;
-      color: white;
-      font: inherit;
-      padding: 8px;
-      max-height: 150px;
-      min-height: 28px;
-    }
-    button {
-      width: 40px;
-      height: 40px;
-      border: 0;
-      border-radius: 50%;
-      background: #16a085;
-      color: white;
-      font-size: 21px;
-      cursor: pointer;
-    }
-    button:disabled { opacity: .5; }
-    .note {
-      text-align: center;
-      color: #888;
-      font-size: 11px;
-      margin-top: 9px;
-    }
-    @media(max-width: 600px) {
-      header { padding: 0 15px; }
-      main { padding: 20px 14px 140px; }
-      .message { max-width: 95%; }
-      .composer { padding: 12px 10px 18px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#212121">
+<title>ShieldX AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#212121;color:#eee;font-family:Arial,sans-serif;height:100vh;display:flex;overflow:hidden}
+button,textarea{font:inherit}
+.sidebar{width:260px;background:#171717;padding:15px;display:flex;flex-direction:column;flex-shrink:0}
+.brand{font-size:20px;font-weight:bold;padding:10px 5px 22px}
+.new-chat{background:transparent;color:white;border:1px solid #555;border-radius:9px;padding:12px;text-align:left;cursor:pointer}
+.new-chat:hover,.history-item:hover{background:#303030}
+.history-title{font-size:12px;color:#999;margin:25px 5px 10px}
+.history{overflow-y:auto;flex:1}
+.history-item{display:flex;align-items:center;gap:7px;padding:10px;border-radius:8px;cursor:pointer;font-size:14px}
+.history-item.active{background:#303030}
+.history-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.delete{border:0;background:transparent;color:#999;cursor:pointer;font-size:16px;padding:3px}
+.delete:hover{color:#fff}
+.sidebar-note{font-size:11px;color:#777;padding:12px 4px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+header{height:60px;border-bottom:1px solid #383838;display:flex;align-items:center;padding:0 20px;gap:12px;font-weight:bold}
+.menu{display:none;background:none;color:white;border:0;font-size:23px;cursor:pointer}
+.chat{flex:1;overflow-y:auto;padding:25px 18px 150px}
+.welcome{text-align:center;margin:17vh auto 30px}
+.welcome h1{font-size:clamp(26px,4vw,36px);margin-bottom:10px}
+.welcome p{color:#999}
+.messages{max-width:800px;margin:auto;display:flex;flex-direction:column;gap:22px}
+.message{max-width:90%;padding:14px 18px;border-radius:18px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.user{align-self:flex-end;background:#303030}
+.assistant{align-self:flex-start}
+.composer{padding:15px 18px 20px}
+.input-wrap{max-width:800px;margin:auto;display:flex;align-items:flex-end;gap:10px;background:#303030;border:1px solid #555;border-radius:25px;padding:11px}
+textarea{flex:1;resize:none;background:transparent;color:white;border:0;outline:0;padding:8px;min-height:28px;max-height:140px}
+.send{width:40px;height:40px;border:0;border-radius:50%;background:#16a085;color:white;font-size:22px;cursor:pointer}
+.send:disabled{opacity:.5}
+.note{text-align:center;color:#888;font-size:11px;margin-top:9px}
+.overlay{display:none}
+@media(max-width:650px){
+.sidebar{position:fixed;z-index:5;top:0;bottom:0;left:-270px;transition:left .2s}
+.sidebar.open{left:0}
+.menu{display:block}
+.overlay.show{display:block;position:fixed;inset:0;background:#0009;z-index:4}
+.chat{padding:20px 12px 130px}
+.composer{padding:12px 10px 16px}
+.message{max-width:96%}
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="logo">S</div>
-    ShieldX AI
-  </header>
+<div class="overlay" id="overlay"></div>
 
-  <main id="chat">
-    <section class="welcome" id="welcome">
-      <h1>What can I help you with?</h1>
-      <p>Your AI assistant for learning and exploring cybersecurity.</p>
-    </section>
-    <div id="messages"></div>
-  </main>
+<aside class="sidebar" id="sidebar">
+  <div class="brand">🛡️ ShieldX AI</div>
+  <button class="new-chat" id="newChat">＋ New Chat</button>
+  <div class="history-title">CHAT HISTORY</div>
+  <div class="history" id="history"></div>
+  <div class="sidebar-note">Your conversations are saved in this browser.</div>
+</aside>
 
-  <div class="composer">
-    <form class="input-wrap" id="chatForm">
-      <textarea id="messageInput" rows="1"
-        placeholder="Message ShieldX AI..." required></textarea>
-      <button id="sendBtn" type="submit" aria-label="Send">↑</button>
-    </form>
-    <div class="note">ShieldX AI can make mistakes. Verify important information.</div>
-  </div>
+<section class="main">
+<header>
+  <button class="menu" id="menu" aria-label="Open menu">☰</button>
+  ShieldX AI
+</header>
 
-  <script>
-    const form = document.getElementById("chatForm");
-    const input = document.getElementById("messageInput");
-    const messages = document.getElementById("messages");
-    const welcome = document.getElementById("welcome");
-    const sendBtn = document.getElementById("sendBtn");
+<main class="chat" id="chat">
+  <section class="welcome" id="welcome">
+    <h1>What can I help you with?</h1>
+    <p>Your AI assistant for learning and exploring cybersecurity.</p>
+  </section>
+  <div class="messages" id="messages"></div>
+</main>
 
-    function addMessage(text, type) {
-      const div = document.createElement("div");
-      div.className = "message " + type;
-      div.textContent = text;
-      messages.appendChild(div);
-      document.getElementById("chat").scrollTop =
-        document.getElementById("chat").scrollHeight;
-      return div;
-    }
+<div class="composer">
+  <form class="input-wrap" id="form">
+    <textarea id="input" rows="1" placeholder="Message ShieldX AI..." required></textarea>
+    <button class="send" id="send" type="submit" aria-label="Send">↑</button>
+  </form>
+  <div class="note">ShieldX AI can make mistakes. Verify important information.</div>
+</div>
+</section>
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const message = input.value.trim();
-      if (!message || sendBtn.disabled) return;
+<script>
+const STORAGE_KEY="shieldx_chat_history_v1";
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
+const historyBox=document.getElementById("history");
+const messagesBox=document.getElementById("messages");
+const welcome=document.getElementById("welcome");
+const input=document.getElementById("input");
+const send=document.getElementById("send");
+const chat=document.getElementById("chat");
 
-      welcome.style.display = "none";
-      addMessage(message, "user");
-      input.value = "";
-      sendBtn.disabled = true;
+let conversations=[];
+let currentId=null;
+let busy=false;
 
-      const reply = addMessage("Thinking...", "assistant");
+try {
+  conversations=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  if(!Array.isArray(conversations)) conversations=[];
+} catch { conversations=[]; }
 
-      try {
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message })
-        });
+function save(){
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(conversations));
+  } catch {
+    alert("Browser storage is full. Please delete some old conversations.");
+  }
+}
 
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.error || "Something went wrong.");
-        }
-        reply.textContent = data.answer || "No response received.";
-      } catch (error) {
-        reply.textContent = "Sorry, I couldn't connect. " + error.message;
-      } finally {
-        sendBtn.disabled = false;
-        input.focus();
-      }
+function makeId(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+
+function currentConversation(){
+  return conversations.find(c=>c.id===currentId);
+}
+
+function addBubble(text,type){
+  const div=document.createElement("div");
+  div.className="message "+type;
+  div.textContent=text;
+  messagesBox.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+  return div;
+}
+
+function render(){
+  messagesBox.replaceChildren();
+  const conversation=currentConversation();
+  welcome.style.display=conversation&&conversation.messages.length?"none":"block";
+
+  if(conversation){
+    conversation.messages.forEach(m=>addBubble(m.content,m.role));
+  }
+  renderHistory();
+}
+
+function renderHistory(){
+  historyBox.replaceChildren();
+  [...conversations].reverse().forEach(c=>{
+    const row=document.createElement("div");
+    row.className="history-item"+(c.id===currentId?" active":"");
+
+    const name=document.createElement("span");
+    name.className="history-name";
+    name.textContent=c.title||"New conversation";
+    name.onclick=()=>openChat(c.id);
+
+    const del=document.createElement("button");
+    del.className="delete";
+    del.textContent="×";
+    del.title="Delete conversation";
+    del.setAttribute("aria-label","Delete conversation");
+    del.onclick=e=>{
+      e.stopPropagation();
+      if(!confirm("Delete this conversation?"))return;
+      conversations=conversations.filter(x=>x.id!==c.id);
+      if(currentId===c.id)currentId=null;
+      save();
+      render();
+    };
+
+    row.append(name,del);
+    row.onclick=()=>openChat(c.id);
+    historyBox.appendChild(row);
+  });
+}
+
+function openChat(id){
+  currentId=id;
+  render();
+  closeSidebar();
+}
+
+function newChat(){
+  currentId=null;
+  input.value="";
+  render();
+  input.focus();
+  closeSidebar();
+}
+
+function closeSidebar(){
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+document.getElementById("newChat").onclick=newChat;
+document.getElementById("menu").onclick=()=>{
+  sidebar.classList.add("open");
+  overlay.classList.add("show");
+};
+overlay.onclick=closeSidebar;
+
+document.getElementById("form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const message=input.value.trim();
+  if(!message||busy)return;
+
+  if(!currentId){
+    currentId=makeId();
+    conversations.push({
+      id:currentId,
+      title:message.slice(0,45),
+      messages:[],
+      updatedAt:Date.now()
     });
+  }
 
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        form.requestSubmit();
-      }
+  const conversation=currentConversation();
+  conversation.messages.push({role:"user",content:message});
+  conversation.updatedAt=Date.now();
+  save();
+  render();
+
+  input.value="";
+  busy=true;
+  send.disabled=true;
+  const reply=addBubble("Thinking...","assistant");
+
+  try{
+    const response=await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message})
     });
-  </script>
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||"Request failed.");
+
+    const answer=data.answer||"No response received.";
+    reply.textContent=answer;
+    conversation.messages.push({role:"assistant",content:answer});
+  }catch(error){
+    reply.textContent="Sorry, I couldn't connect. "+error.message;
+  }finally{
+    conversation.updatedAt=Date.now();
+    save();
+    renderHistory();
+    busy=false;
+    send.disabled=false;
+    input.focus();
+  }
+});
+
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&!e.shiftKey){
+    e.preventDefault();
+    document.getElementById("form").requestSubmit();
+  }
+});
+
+renderHistory();
+</script>
 </body>
 </html>
